@@ -30,6 +30,7 @@ public class BeerController {
     @PatchMapping(BEER_PATH_ID)
     public ResponseEntity updateBeerPatchById(@PathVariable("beerId")UUID beerId, @RequestBody BeerDTO beer){
 
+        log.info("Received PATCH request for beer: {}", beerId);
         beerService.patchBeerById(beerId, beer);
 
         return new ResponseEntity(HttpStatus.NO_CONTENT);
@@ -67,7 +68,7 @@ public class BeerController {
     }
 
     @GetMapping(value = BEER_PATH)
-    public Page<BeerDTO> listBeers(@RequestParam(required = false) String beerName,
+        public Page<BeerDTO> listBeers(@RequestParam(required = false) String beerName,
                                    @RequestParam(required = false) BeerStyle beerStyle,
                                    @RequestParam(required = false) Boolean showInventory,
                                    @RequestParam(required = false) Integer pageNumber,
