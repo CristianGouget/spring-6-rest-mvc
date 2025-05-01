@@ -1,6 +1,8 @@
 package guru.springframework.spring6restmvc.entities;
 
 import jakarta.persistence.*;
+import jakarta.validation.constraints.Min;
+import jakarta.validation.constraints.NotNull;
 import lombok.*;
 import org.hibernate.annotations.*;
 import org.hibernate.type.SqlTypes;
@@ -40,12 +42,14 @@ public class BeerOrderLine {
         return this.id == null;
     }
 
-    private Integer orderQuantity = 0;
-    private Integer quantityAllocated = 0;
+    @Min(value = 1, message = "Quantity must be greater than 0")
+    private Integer orderQuantity;
+
+    private Integer quantityAllocated;
 
     @ManyToOne
     private Beer beer;
 
     @ManyToOne
-    private BeerOrder beerOrder;
+    private BeerOrder beerOrder; //Validate not null?
 }
