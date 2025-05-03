@@ -24,12 +24,9 @@ public class BeerOrderLineDTO {
 
     private BeerDTO beer;
 
-    private BeerOrder beerOrder;
+    //private BeerOrder beerOrder;
 
     private Timestamp createdDate;
 
     private Timestamp lastModifiedDate;
 }
-
-//    @NotNull
-//

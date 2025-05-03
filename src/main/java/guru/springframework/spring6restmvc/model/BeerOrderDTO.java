@@ -1,11 +1,10 @@
 package guru.springframework.spring6restmvc.model;
 
 import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.NotNull;
 import lombok.Builder;
 import lombok.Data;
 
-import java.security.Timestamp;
+import java.sql.Timestamp;
 import java.util.Set;
 import java.util.UUID;
 
@@ -17,7 +16,6 @@ public class BeerOrderDTO {
 
     private Long version;
 
-    @NotBlank
     private String customerRef;
 
     private CustomerDTO customer;

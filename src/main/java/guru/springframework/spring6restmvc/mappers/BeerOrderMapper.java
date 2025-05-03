@@ -12,6 +12,26 @@ import org.mapstruct.Mapping;
 @Mapper
 public interface BeerOrderMapper {
 
+    @Mapping(target = "beerOrder", ignore = true)
+    BeerOrderShipment beerOrderShipmentDtoToBeerOrderShipment(BeerOrderShipmentDTO beerOrderShipmentDTO);
+
+    BeerOrderShipmentDTO beerOrderShipmentToBeerOrderShipmentDto(BeerOrderShipment beerOrderShipment);
+
+    @Mapping(target = "beerOrder", ignore = true)
+    BeerOrderLine beerOrderLineDtoToBeerOrderLine(BeerOrderLineDTO beerOrderLineDTO);
+
+    BeerOrderLineDTO beerOrderLineToBeerOrderLineDto(BeerOrderLine beerOrderLine);
+
+    BeerOrder beerOrderDtoToBeerOrder(BeerOrderDTO beerOrder);
+
+    BeerOrderDTO beerOrderToBeerOrderDto(BeerOrder beerOrder);
+
+}
+
+/*
+@Mapper
+public interface BeerOrderMapper {
+
     BeerOrder beerOrderDtoToBeerOrder(BeerOrderDTO orderDto);
 
     BeerOrderDTO beerOrderToBeerOrderDTO(BeerOrder order);
@@ -25,4 +45,4 @@ public interface BeerOrderMapper {
     BeerOrderShipment beerOrderShipmentDtoToBeerOrderShipment(BeerOrderShipmentDTO orderShipmentDto);
 
     BeerOrderShipmentDTO beerOrderShipmentToBeerOrderShipmentDto(BeerOrderShipment orderShipment);
-}
+}*/
