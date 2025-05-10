@@ -1,11 +1,11 @@
 package guru.springframework.spring6restmvc.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import guru.springframework.spring6restmvc.model.BeerOrderCreateDTO;
-import guru.springframework.spring6restmvc.model.BeerOrderLineCreateDTO;
+import guru.springframework.spring6restmvc.model.*;
 import guru.springframework.spring6restmvc.repositories.BeerOrderRepository;
 import guru.springframework.spring6restmvc.repositories.BeerRepository;
 import guru.springframework.spring6restmvc.repositories.CustomerRepository;
+import jakarta.transaction.Transactional;
 import lombok.val;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -16,11 +16,13 @@ import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.web.context.WebApplicationContext;
 
+import java.util.HashSet;
 import java.util.Set;
 
 import static guru.springframework.spring6restmvc.controller.BeerControllerTest.jwtRequestPostProcessor;
 import static org.hamcrest.Matchers.greaterThan;
 import static org.hamcrest.core.Is.is;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.springframework.security.test.web.servlet.setup.SecurityMockMvcConfigurers.springSecurity;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
@@ -50,6 +52,54 @@ class BeerOrderControllerTestIT {
         mockMvc = MockMvcBuilders.webAppContextSetup(wac)
                 .apply(springSecurity())
                 .build();
+    }
+
+    @Test
+    void testDelete() throws Exception {
+        val beerOrder = beerOrderRepository.findAll().getFirst();
+
+        mockMvc.perform(delete(BeerOrderController.BEER_ORDER_PATH_ID, beerOrder.getId())
+                .with(jwtRequestPostProcessor))
+                .andExpect(status().isNoContent());
+
+        assertTrue(beerOrderRepository.findById(beerOrder.getId()).isEmpty());
+
+        mockMvc.perform(delete(BeerOrderController.BEER_ORDER_PATH_ID, beerOrder.getId())
+                .with(jwtRequestPostProcessor))
+                .andExpect(status().isNotFound());
+    }
+
+    @Transactional
+    @Test //Should create more test to test other update logic
+    void testUpdateOrder() throws Exception {
+        val beerOrder = beerOrderRepository.findAll().getFirst();
+
+        Set<BeerOrderLineUpdateDTO> lines = new HashSet<>();
+
+        beerOrder.getBeerOrderLines().forEach(beerOrderLine -> {
+           lines.add(BeerOrderLineUpdateDTO.builder()
+                   .id(beerOrderLine.getId())
+                   .beerId(beerOrderLine.getBeer().getId())
+                   .orderQuantity(beerOrderLine.getOrderQuantity())
+                   .quantityAllocated(beerOrderLine.getQuantityAllocated())
+                   .build());
+        });
+
+        val beerOrderUpdateDTO = BeerOrderUpdateDTO.builder()
+                .customerId(beerOrder.getCustomer().getId())
+                .customerRef("TestRef")
+                .beerOrderLines(lines)
+                .beerOrderShipment(BeerOrderShipmentUpdateDTO.builder()
+                        .trackingNumber("123456")
+                        .build())
+                .build();
+
+        mockMvc.perform(put(BeerOrderController.BEER_ORDER_PATH_ID, beerOrder.getId())
+                .contentType("application/json")
+                .content(objectMapper.writeValueAsString(beerOrderUpdateDTO))
+                .with(jwtRequestPostProcessor))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.customerRef", is("TestRef")));
     }
 
     @Test

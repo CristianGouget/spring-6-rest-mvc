@@ -5,7 +5,7 @@ import guru.springframework.spring6restmvc.entities.BeerAudit;
 import guru.springframework.spring6restmvc.model.BeerDTO;
 import org.mapstruct.*;
 
-@Mapper
+@Mapper(componentModel = "spring")
 public interface BeerMapper {
 
     @Mapping(target = "categories", ignore = true)
